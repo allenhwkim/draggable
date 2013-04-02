@@ -8,8 +8,9 @@ var Draggable = function(element, options) {
   this.init = function(element, options) {
     if (options) {
       this.options = options;
-      if (!this.options.boundary)  this.options.boundary = document.body;
-      if (!this.options.callbacks) this.options.callbacks = {};
+      if (!this.options.boundary)  {
+        this.options.boundary = document.body;
+      }
     }
     element.addEventListener("mousedown", this.start, false);
   };
@@ -46,8 +47,8 @@ var Draggable = function(element, options) {
 
       that.startedWith = { event : event, rect : that.el.getBoundingClientRect() };
       that.orgCssText = that.orgEl.style.cssText;
-      if (that.options.callbacks.start) {
-        that.options.callbacks.start.call(this, event, that.el);
+      if (that.options.start) {
+        that.options.start.call(this, event, that.el);
       }
     }
   };
@@ -64,14 +65,14 @@ var Draggable = function(element, options) {
       if (newTop > boundaryRect.top && newBottom < boundaryRect.bottom) {
         that.el.style.top  = newTop+'px';
       }
-      if (that.options.callbacks.drag) {
-        that.options.callbacks.drag.call(this, event, that.el);
+      if (that.options.drag) {
+        that.options.drag.call(this, event, that.el);
       }
     }
   };
   this.end = function(event) {
-    if (that.options.callbacks.end) {
-      that.options.callbacks.end.call(this, event, that.el);
+    if (that.options.end) {
+      that.options.end.call(this, event, that.el);
     }
     if (that.tmpArea) {
       if (that.options.clone) {

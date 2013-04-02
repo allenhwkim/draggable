@@ -12,18 +12,16 @@ window.onload = function() {
   new Draggable(divider, {
     boundary: document.querySelector(".outside"),
     clone: true,
-    callbacks: {
-      start: function(event, el) {
-        startRect = {
-          left: leftEl.getBoundingClientRect(), 
-          divider: divider.getBoundingClientRect(),
-          right: rightEl.getBoundingClientRect()
-        };
-      },
-      drag: function(event, el, move) { //event : mousemove event, el: dragging element
-        leftEl.style.width  = startRect.left.width + (parseInt(el.style.left) - startRect.divider.left) + "px";
-        rightEl.style.width = startRect.right.width + (startRect.divider.left - parseInt(el.style.left)) + "px";
-      }
+    start: function(event, el) {
+      startRect = {
+        left: leftEl.getBoundingClientRect(), 
+        divider: divider.getBoundingClientRect(),
+        right: rightEl.getBoundingClientRect()
+      };
+    },
+    drag: function(event, el, move) { //event : mousemove event, el: dragging element
+      leftEl.style.width  = startRect.left.width + (parseInt(el.style.left) - startRect.divider.left) + "px";
+      rightEl.style.width = startRect.right.width + (startRect.divider.left - parseInt(el.style.left)) + "px";
     }
   });
 };
