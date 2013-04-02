@@ -33,7 +33,7 @@ var Draggable = function(element, options) {
       if (that.options.clone) {
         var clonedEl = that.orgEl.cloneNode(true);
         var css = { opacity: 1, display: "block", position: "absolute", margin: 0,
-          backgroundColor: 'pink', height: rect.height+"px", width: rect.width+"px", left: rect.left+"px", top: rect.top+"px"}
+          height: rect.height+"px", width: rect.width+"px", left: rect.left+"px", top: rect.top+"px"}
         for (var attr in css) { clonedEl.style[attr] = css[attr]; }
         that.el = clonedEl;
         that.el.addEventListener('mouseup',that.end, true);
