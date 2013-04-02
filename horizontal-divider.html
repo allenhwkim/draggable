@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Draggable - Horizontal Divider</title>
+<script src="draggable.js"></script>
+<script>
+window.onload = function() {
+  var el = document.querySelector(".draggable");
+  new Draggable(el, {
+    boundary: document.querySelector(".outside"),
+    clone: true,
+    callbacks: {
+      drag: function(event, el) { //event : mousemove event, el: dragging element
+        document.querySelector(".top").style.height = el.style.top;
+        document.querySelector(".bottom").style.height = (300 - parseInt(el.style.top) - 10) + "px";
+      }
+    }
+  });
+}
+</script>
+</head>
+<body>
+  <div class="outside">
+    <div class="top" style="background-color:red; height:145px;"></div>
+    <div class="draggable" style="background-color:green; height:10px;">&nbsp;</div>
+    <div class="bottom" style="background-color:blue; height: 145px;">&nbsp;</div>
+  </div>
+</body>
+</html>
