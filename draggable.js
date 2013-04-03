@@ -20,7 +20,7 @@ var Draggable = function(element, options) {
       // setup dragging Area
       var boundaryRect = that.options.boundary.getBoundingClientRect();
       var tmpArea = document.createElement('div');
-      tmpArea.style.cssText = "position:absolute; border: 1px dotted black; "+
+      tmpArea.style.cssText = "position:absolute; border: 0px dotted black; "+
         "width:"+boundaryRect.width+"px; height:"+boundaryRect.height+"px; "+
         "top:"+boundaryRect.top+"px; left:"+boundaryRect.left+"px";
       document.body.appendChild(tmpArea);
