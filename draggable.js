@@ -20,10 +20,12 @@ var Draggable = function(element, options) {
       // setup dragging Area
       var boundaryRect = self.options.boundary.getBoundingClientRect();
       var tmpArea = document.createElement('div');
+      var scrollTop  = (document.all ? document.body.scrollTop : window.pageYOffset);
+      var scrollLeft = (document.all ? document.body.scrollLeft : window.pageXOffset);
       tmpArea.style.cssText = "position:absolute; border: 0px dotted black; "+
         "width:"+boundaryRect.width+"px; height:"+boundaryRect.height+"px; "+
-        "top:"+(document.body.scrollTop+boundaryRect.top)+"px; "+
-        "left:"+(document.body.scrollLeft+boundaryRect.left)+"px";
+        "top:"+(scrollTop+boundaryRect.top)+"px; "+
+        "left:"+(scrollLeft+boundaryRect.left)+"px";
       document.body.appendChild(tmpArea);
       tmpArea.addEventListener('mousemove',self.drag, false);
       tmpArea.addEventListener('mouseup',self.end, true);
@@ -35,8 +37,8 @@ var Draggable = function(element, options) {
         var clonedEl = self.orgEl.cloneNode(true);
         var css = { opacity: 1, display: "block", position: "absolute", margin: 0,
           height: rect.height+"px", width: rect.width+"px", 
-          left: (document.body.scrollLeft+rect.left)+"px",
-          top: (document.body.scrollTop+rect.top)+"px"
+          left: (scrollLeft+rect.left)+"px",
+          top: (scrollTop+rect.top)+"px"
         }
         for (var attr in css) { clonedEl.style[attr] = css[attr]; }
         self.el = clonedEl;
@@ -57,6 +59,8 @@ var Draggable = function(element, options) {
     }
   };
   this.drag =  function(event) {
+    var scrollTop  = (document.all ? document.body.scrollTop : window.pageYOffset);
+    var scrollLeft = (document.all ? document.body.scrollLeft : window.pageXOffset);
     if (event.which == 1) {
       var distance = {
         x: (event.clientX - self.startedWith.event.clientX),
@@ -70,11 +74,11 @@ var Draggable = function(element, options) {
 
       var boundaryRect = self.tmpArea.getBoundingClientRect();
       if (newLeft > boundaryRect.left && newRight < boundaryRect.right) {
-        self.el.style.left  = (document.body.scrollLeft + newLeft)+'px';
+        self.el.style.left  = (scrollLeft + newLeft)+'px';
         move.x = distance.x;
       }
       if (newTop > boundaryRect.top && newBottom < boundaryRect.bottom) {
-        self.el.style.top  = (document.body.scrollTop + newTop)+'px';
+        self.el.style.top  = (scrollTop + newTop)+'px';
         move.y = distance.y;
       }
       if (self.options.drag) {
