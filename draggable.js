@@ -16,6 +16,7 @@ var Draggable = function(element, options) {
   };
   var self = this;
   this.start = function(event) {
+    event.preventDefault(); //prevent from selecting html
     if (!self.tmpArea) {
       // setup dragging Area
       var boundaryRect = self.options.boundary.getBoundingClientRect();
@@ -54,7 +55,7 @@ var Draggable = function(element, options) {
       self.startedWith = { event : event, rect : self.el.getBoundingClientRect() };
       self.orgCssText = self.orgEl.style.cssText;
       if (self.options.start) {
-        self.options.start.call(this, event, self.el);
+        self.options.start.call(this, event, self.orgEl);
       }
     }
   };
@@ -82,13 +83,13 @@ var Draggable = function(element, options) {
         move.y = distance.y;
       }
       if (self.options.drag) {
-        self.options.drag.call(this, event, self.el, move);
+        self.options.drag.call(this, event, self.orgEl, move);
       }
     }
   };
   this.end = function(event) {
     if (self.options.end) {
-      self.options.end.call(this, event, self.el);
+      self.options.end.call(this, event, self.orgEl);
     }
     if (self.tmpArea) {
       if (self.options.clone) {

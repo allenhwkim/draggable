@@ -3,6 +3,24 @@
 <head>
 <title>Draggable - Demo</title>
 <script src="draggable.js"></script>
+<script>function forCode(string) { return "\n  "+string.replace(/</g, '&lt;').replace(/^[\s]+/g,"") }</script>
+<style>
+pre { float: left; width: 300px; margin-top: -15px; }
+#drag_anywhere {height:50px; width: 600px; float: left}
+.drag_anywhere {cursor:pointer; width:50px; height:50px; background:green}
+.boundary {width:600px; height: 150px; border: 1px solid; float:left }
+.boundary .draggable {cursor:pointer; width:50px; height:50px; background:green}
+.boundary_4_cloned {width:600px; height: 150px; border: 1px solid; float:left }
+.boundary_4_cloned .draggable {cursor:pointer; position:absolute; width:50px; height:50px; background:green}
+.container1 {width:600px; float:left}
+.container1 .top {background-color:red; height:145px;}
+.container1 .vdivider {cursor:pointer; background-color:green; height:10px;}
+.container1 .bottom {background-color:blue; height: 145px;}
+.container2 {height:300px;width:600px; float:left}
+.container2 .left {background:red; float:left; height: 300px; width: 295px}
+.container2 .hdivider {cursor:pointer; background:green; float:left; height: 300px; width:10px;}
+.container2 .right {background:blue; float:left; height: 300px; width: 295px}
+</style>
 </head>
 <body>
   <h1>Vanilla Javascript Draggablle</h1>
@@ -11,100 +29,104 @@
 
 
   <h3> Drag anywhere </h3>
-  <div style="height:50px; width: 600px; float: left">
-    <div class="drag_anywhere" style="cursor:pointer; width:50px; height:50px; background:green"></div>
+  <div id="drag_anywhere">
+    <div class="drag_anywhere"></div>
   </div>
   <script id="drag_anywhere"> new Draggable('.drag_anywhere'); </script>
-  <pre style="float:left; height:50px; width: 300px;">
-    <script>document.write(document.querySelector("#drag_anywhere").innerHTML)</script>
+  <pre>
+  <script>document.write(forCode(document.querySelector("div#drag_anywhere").innerHTML))</script>
+  <script>document.write(forCode(document.querySelector("script#drag_anywhere").outerHTML))</script>
   </pre>
   <br style="clear:both"/>
 
   <h3> Drag in boundary </h3>
-  <div class="boundary" style="width:600px; height: 300px; border: 1px solid; float:left ">
-    <div class="draggable" style="cursor:pointer; width:50px; height:50px; background:green"></div>
+  <div class="boundary">
+    <div class="draggable"></div>
   </div>
   <script id="drag_in_boundary">
     new Draggable('.boundary .draggable', {
       boundary: document.querySelector(".boundary")   
     });
   </script>
-  <pre style="float:left; height:300px; width: 300px;">
-    <script>document.write(document.querySelector("#drag_in_boundary").innerHTML)</script>
+  <pre>
+    <script>document.write(forCode(document.querySelector("div.boundary").outerHTML))</script>
+    <script>document.write(forCode(document.querySelector("script#drag_in_boundary").outerHTML))</script>
   </pre>
   <br style="clear:both"/>
 
   <h3> Drag as cloned </h3>
-  <div class="bounary_4_cloned" style="width:600px; height: 300px; border: 1px solid; float:left ">
-    <div class="draggable" style="cursor:pointer; position:absolute; width:50px; height:50px; background:green"></div>
+  <div class="boundary_4_cloned">
+    <div class="draggable" style="background:green"></div>
   </div>
   <script id="drag_as_cloned">
-    var el = document.querySelector('.bounary_4_cloned .draggable');
-    new Draggable(el, {
-      boundary: document.querySelector(".bounary_4_cloned"),   
+    new Draggable('.boundary_4_cloned .draggable', {
+      boundary: document.querySelector(".boundary_4_cloned"),   
       clone: true,
-      end: function(event, dragEl) {
-        el.style.top = dragEl.style.top;
-        el.style.left = dragEl.style.left;
+      end: function(event, orgEl) {
+        orgEl.style.top = event.target.style.top; // this == event.target
+        orgEl.style.left = event.target.style.left;
       }
     });
   </script>
-  <pre style="float:left; height:300px; width: 300px;">
-    <script>document.write(document.querySelector("#drag_as_cloned").innerHTML)</script>
+  <pre>
+    <script>document.write(forCode(document.querySelector("div.boundary_4_cloned").outerHTML))</script>
+    <script>document.write(forCode(document.querySelector("#drag_as_cloned").outerHTML))</script>
   </pre>
   <br style="clear:both"/>
 
   <h3>Vertical Divider</h3>
-  <div class="container1" style="width:600px; float:left">
-    <div class="top" style="background-color:red; height:145px;"></div>
-    <div class="vdivider" style="cursor:pointer; background-color:green; height:10px;">&nbsp;</div>
-    <div class="bottom" style="background-color:blue; height: 145px;">&nbsp;</div>
+  <div class="container1">
+    <div class="top"></div>
+    <div class="vdivider">&nbsp;</div>
+    <div class="bottom">&nbsp;</div>
   </div>
   <script id="vertical_divider">
     new Draggable('.vdivider', {
       boundary: document.querySelector(".container1"),   
       clone: true,
-      start: function(event, el) {
-        el.startHeights = { 
-          top: parseInt(document.querySelector(".top").style.height), 
-          bottom: parseInt(document.querySelector(".bottom").style.height) 
+      start: function(event, orgEl) {
+        orgEl.startHeights = { 
+          top: parseInt(document.querySelector(".top").clientHeight), 
+          bottom: parseInt(document.querySelector(".bottom").clientHeight) 
         }
       },
-      drag: function(event, el, move) {
-        document.querySelector(".top").style.height    = (el.startHeights.top+move.y) + "px";
-        document.querySelector(".bottom").style.height = (el.startHeights.bottom-move.y) + "px";
+      drag: function(event, orgEl, move) {
+        document.querySelector(".top").style.height    = (orgEl.startHeights.top+move.y) + "px";
+        document.querySelector(".bottom").style.height = (orgEl.startHeights.bottom-move.y) + "px";
       }
     });
   </script>
-  <pre style="float:left; height:300px; width: 300px;">
-    <script>document.write(document.querySelector("#vertical_divider").innerHTML)</script>
+  <pre>
+    <script>document.write(forCode(document.querySelector("div.container1").outerHTML))</script>
+    <script>document.write(forCode(document.querySelector("#vertical_divider").outerHTML))</script>
   </pre>
   <br style="clear:both"/>
 
   <h3>Horizontal Divider</h3>
-  <div class="container2" style="height:300px;width:600px; float:left">
-    <div class="left" style="background:red; float:left; height: 300px; width: 295px"></div>
-    <div class="hdivider" style="cursor:pointer; background:green; float:left; height: 300px; width:10px;"></div>
-    <div class="right" style="background:blue; float:left; height: 300px; width: 295px"></div>
+  <div class="container2">
+    <div class="left"></div>
+    <div class="hdivider"></div>
+    <div class="right"></div>
   </div>
   <script id="horizontal_divider">
     new Draggable('.hdivider', {
       boundary: document.querySelector(".container2"),   
       clone: true,
-      start: function(event, el) {
-        el.startWidths = { 
-          left: parseInt(document.querySelector(".left").style.width), 
-          right: parseInt(document.querySelector(".right").style.width) 
+      start: function(event, orgEl) {
+        orgEl.startWidths = { 
+          left: parseInt(document.querySelector(".left").clientWidth), 
+          right: parseInt(document.querySelector(".right").clientWidth) 
         }
       },
-      drag: function(event, el, move) {
-        document.querySelector(".left").style.width   = (el.startWidths.left+move.x) + "px";
-        document.querySelector(".right").style.width = (el.startWidths.right-move.x) + "px";
+      drag: function(event, orgEl, move) {
+        document.querySelector(".left").style.width   = (orgEl.startWidths.left+move.x) + "px";
+        document.querySelector(".right").style.width = (orgEl.startWidths.right-move.x) + "px";
       }
     });
   </script>
-  <pre style="float:left; height:300px; width: 300px;">
-    <script>document.write(document.querySelector("#horizontal_divider").innerHTML)</script>
+  <pre>
+    <script>document.write(forCode(document.querySelector("div.container2").outerHTML))</script>
+    <script>document.write(forCode(document.querySelector("#horizontal_divider").outerHTML))</script>
   </pre>
   <br style="clear:both"/>
 </body>
