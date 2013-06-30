@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Draggable - Demo</title>
+<script src="draggable.js"></script>
+</head>
+<body>
+  <h1>Vanilla Javascript Draggablle</h1>
+  Author: Allen Kim<br/>
+  open-sourced at <a href="https://github.com/bighostkim/draggable">github</a>
+
+
+  <h3> Drag anywhere </h3>
+  <div style="height:50px; width: 600px; float: left">
+    <div class="drag_anywhere" style="cursor:pointer; width:50px; height:50px; background:green"></div>
+  </div>
+  <script id="drag_anywhere"> new Draggable('.drag_anywhere'); </script>
+  <pre style="float:left; height:50px; width: 300px;">
+    <script>document.write(document.querySelector("#drag_anywhere").innerHTML)</script>
+  </pre>
+  <br style="clear:both"/>
+
+  <h3> Drag in boundary </h3>
+  <div class="boundary" style="width:600px; height: 300px; border: 1px solid; float:left ">
+    <div class="draggable" style="cursor:pointer; width:50px; height:50px; background:green"></div>
+  </div>
+  <script id="drag_in_boundary">
+    new Draggable('.boundary .draggable', {
+      boundary: document.querySelector(".boundary")   
+    });
+  </script>
+  <pre style="float:left; height:300px; width: 300px;">
+    <script>document.write(document.querySelector("#drag_in_boundary").innerHTML)</script>
+  </pre>
+  <br style="clear:both"/>
+
+  <h3> Drag as cloned </h3>
+  <div class="bounary_4_cloned" style="width:600px; height: 300px; border: 1px solid; float:left ">
+    <div class="draggable" style="cursor:pointer; position:absolute; width:50px; height:50px; background:green"></div>
+  </div>
+  <script id="drag_as_cloned">
+    var el = document.querySelector('.bounary_4_cloned .draggable');
+    new Draggable(el, {
+      boundary: document.querySelector(".bounary_4_cloned"),   
+      clone: true,
+      end: function(event, dragEl) {
+        el.style.top = dragEl.style.top;
+        el.style.left = dragEl.style.left;
+      }
+    });
+  </script>
+  <pre style="float:left; height:300px; width: 300px;">
+    <script>document.write(document.querySelector("#drag_as_cloned").innerHTML)</script>
+  </pre>
+  <br style="clear:both"/>
+
+  <h3>Vertical Divider</h3>
+  <div class="container1" style="width:600px; float:left">
+    <div class="top" style="background-color:red; height:145px;"></div>
+    <div class="vdivider" style="cursor:pointer; background-color:green; height:10px;">&nbsp;</div>
+    <div class="bottom" style="background-color:blue; height: 145px;">&nbsp;</div>
+  </div>
+  <script id="vertical_divider">
+    new Draggable('.vdivider', {
+      boundary: document.querySelector(".container1"),   
+      clone: true,
+      start: function(event, el) {
+        el.startHeights = { 
+          top: parseInt(document.querySelector(".top").style.height), 
+          bottom: parseInt(document.querySelector(".bottom").style.height) 
+        }
+      },
+      drag: function(event, el, move) {
+        document.querySelector(".top").style.height    = (el.startHeights.top+move.y) + "px";
+        document.querySelector(".bottom").style.height = (el.startHeights.bottom-move.y) + "px";
+      }
+    });
+  </script>
+  <pre style="float:left; height:300px; width: 300px;">
+    <script>document.write(document.querySelector("#vertical_divider").innerHTML)</script>
+  </pre>
+  <br style="clear:both"/>
+
+  <h3>Horizontal Divider</h3>
+  <div class="container2" style="height:300px;width:600px; float:left">
+    <div class="left" style="background:red; float:left; height: 300px; width: 295px"></div>
+    <div class="hdivider" style="cursor:pointer; background:green; float:left; height: 300px; width:10px;"></div>
+    <div class="right" style="background:blue; float:left; height: 300px; width: 295px"></div>
+  </div>
+  <script id="horizontal_divider">
+    new Draggable('.hdivider', {
+      boundary: document.querySelector(".container2"),   
+      clone: true,
+      start: function(event, el) {
+        el.startWidths = { 
+          left: parseInt(document.querySelector(".left").style.width), 
+          right: parseInt(document.querySelector(".right").style.width) 
+        }
+      },
+      drag: function(event, el, move) {
+        document.querySelector(".left").style.width   = (el.startWidths.left+move.x) + "px";
+        document.querySelector(".right").style.width = (el.startWidths.right-move.x) + "px";
+      }
+    });
+  </script>
+  <pre style="float:left; height:300px; width: 300px;">
+    <script>document.write(document.querySelector("#horizontal_divider").innerHTML)</script>
+  </pre>
+  <br style="clear:both"/>
+</body>
+</html>
