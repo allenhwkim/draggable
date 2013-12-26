@@ -1,1 +1,1 @@
- * [Demo](http://allenhwkim.github.com/draggable.html)
+ * [Demo](https://rawgithub.com/allenhwkim/draggable/master/demo.html)
