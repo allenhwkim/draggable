@@ -1,3 +1,23 @@
+
+/**
+ * Vanilla Javascript Draggable
+ * 
+ * Usage: 
+ *    new Draggable(element, options);
+ * 
+ * element:
+ *  element to drag
+ * 
+ * options
+ *  boundary : element (default, document.body)
+ *  clone: true or false, indicates drag cloned element or not (default, false)
+ *  start : callback function on drag starts
+ *        parameters: evnet, self.orgEl
+ *  drag : callback function on drag
+ *        parameters: event, self.orgEl, move
+ *  end : callback function on drag end
+ *        parameters: event, self.orgEl
+ */
 var Draggable = function(element, options) {
   if (typeof element == 'string' || element instanceof String) {
     element = document.querySelector(element);
@@ -8,6 +28,7 @@ var Draggable = function(element, options) {
   this.tmpArea = null;     // when drag starts, create a temporary dragging area so that mouse can move around
   this.startedWith = null; // status of when drag starts
   this.options = null;
+
   this.init = function(element, options) {
     options = options || {}
     options.boundary = options.boundary || document.body;
