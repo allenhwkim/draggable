@@ -118,7 +118,7 @@ var Draggable = function(element, options) {
       _this.options.end.call(this, event, _this.orgEl);
     }
     _this.tmpArea.removeEventListener('mousemove', _this.drag, false);
-    _this.tmpArea.addEventListener('mouseup', _this.end, true);
+    _this.tmpArea.removeEventListener('mouseup', _this.end, true);
     if (_this.tmpArea) {
       if (_this.options.clone) {
         document.body.removeChild( _this.el );
