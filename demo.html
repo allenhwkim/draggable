@@ -62,9 +62,9 @@ pre { float: left; width: 300px; margin-top: -15px; }
     new Draggable('.boundary_4_cloned .draggable', {
       boundary: document.querySelector(".boundary_4_cloned"),   
       clone: true,
-      end: function(event, orgEl) {
-        orgEl.style.top = event.target.style.top; // this == event.target
-        orgEl.style.left = event.target.style.left;
+      end: function(dragEl, orgEl) {
+        orgEl.style.top = dragEl.style.top;
+        orgEl.style.left = dragEl.style.left;
       }
     });
   </script>
@@ -83,16 +83,13 @@ pre { float: left; width: 300px; margin-top: -15px; }
   <script id="vertical_divider">
     new Draggable('.vdivider', {
       boundary: document.querySelector(".container1"),   
-      clone: true,
       start: function(event, orgEl) {
-        orgEl.startHeights = { 
-          top: parseInt(document.querySelector(".top").clientHeight), 
-          bottom: parseInt(document.querySelector(".bottom").clientHeight) 
-        }
+        orgEl.topHeight = document.querySelector(".top").clientHeight;
+        orgEl.bottomHeight = document.querySelector(".bottom").clientHeight;
       },
-      drag: function(event, orgEl, move) {
-        document.querySelector(".top").style.height    = (orgEl.startHeights.top+move.y) + "px";
-        document.querySelector(".bottom").style.height = (orgEl.startHeights.bottom-move.y) + "px";
+      drag: function(dragEl, orgEl, move) {
+        document.querySelector(".top").style.height = (orgEl.topHeight+move.y) + "px";
+        document.querySelector(".bottom").style.height = (orgEl.bottomHeight-move.y) + "px";
       }
     });
   </script>
@@ -110,17 +107,14 @@ pre { float: left; width: 300px; margin-top: -15px; }
   </div>
   <script id="horizontal_divider">
     new Draggable('.hdivider', {
-      boundary: document.querySelector(".container2"),   
-      clone: true,
+      boundary: document.querySelector(".container2"),
       start: function(event, orgEl) {
-        orgEl.startWidths = { 
-          left: parseInt(document.querySelector(".left").clientWidth), 
-          right: parseInt(document.querySelector(".right").clientWidth) 
-        }
+        orgEl.leftWidth = document.querySelector(".left").clientWidth;
+        orgEl.rightWidth = document.querySelector(".right").clientWidth;
       },
-      drag: function(event, orgEl, move) {
-        document.querySelector(".left").style.width   = (orgEl.startWidths.left+move.x) + "px";
-        document.querySelector(".right").style.width = (orgEl.startWidths.right-move.x) + "px";
+      drag: function(dragEl, orgEl, move) {
+        document.querySelector(".left").style.width = (orgEl.leftWidth+move.x) + "px";
+        document.querySelector(".right").style.width = (orgEl.rightWidth-move.x) + "px";
       }
     });
   </script>

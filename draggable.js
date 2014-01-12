@@ -13,16 +13,16 @@
  *  start : callback function on drag starts
  *        parameters: evnet, _this.orgEl
  *  drag : callback function on drag
- *        parameters: event, _this.orgEl, move
+ *        parameters: _this.dragEl, _this.orgEl, move
  *  end : callback function on drag end
- *        parameters: event, _this.orgEl
+ *        parameters: _this.dragEl, _this.orgEl, move
  */
 var Draggable = function(element, options) {
   if (typeof element == 'string' || element instanceof String) {
     element = document.querySelector(element);
   }
   this.orgEl = element;    // original clicked element 
-  this.el = null;          // element to be dragged. original or cloned one
+  this.dragEl = null;          // element to be dragged. original or cloned one
   this.tmpArea = null;     // when drag starts, create a temporary dragging area so that mouse can move around
   this.startedWith = null; // status of when drag starts
   this.options = null;
@@ -39,6 +39,19 @@ var Draggable = function(element, options) {
     }
     el.parentElement.insertBefore(overlay, el);
     return overlay;
+  }
+
+  var createClone = function(el, options) {
+    var clone = el.cloneNode(true);
+    var elBCR = el.getBoundingClientRect();
+    clone.style.position = "absolute";
+    clone.style.width = elBCR.width +'px';
+    clone.style.height= elBCR.height+'px';
+    for (var key in (options||{})) {
+      overlay.style[key] = options[key];
+    }
+    el.parentElement.insertBefore(clone, el);
+    return clone;
   }
 
   var _this = this;
@@ -60,24 +73,18 @@ var Draggable = function(element, options) {
       var scrollTop  = (document.all ? document.body.scrollTop : window.pageYOffset);
       var scrollLeft = (document.all ? document.body.scrollLeft : window.pageXOffset);
       if (_this.options.clone) {
-        var clonedEl = _this.orgEl.cloneNode(true);
-        var css = { opacity: 1, display: "block", position: "absolute", margin: 0,
-          height: rect.height+"px", width: rect.width+"px", 
-          left: (scrollLeft+rect.left)+"px",
-          top: (scrollTop+rect.top)+"px"
-        }
-        for (var attr in css) { clonedEl.style[attr] = css[attr]; }
-        _this.el = clonedEl;
-        _this.el.addEventListener('mouseup',_this.end, true);
-        document.body.appendChild(clonedEl);
+        _this.dragEl = createClone(_this.orgEl);
+        _this.dragEl.addEventListener('mouseup',_this.end, true);
       } else {
-        _this.el = _this.orgEl;
-        _this.el.style.position ='absolute';
-        _this.el.style.width = rect.width+'px';
-        _this.el.style.height = rect.height+'px';
+        _this.dragEl = _this.orgEl;
+        _this.dragEl.style.position ='absolute';
+        _this.dragEl.style.width = rect.width+'px';
+        _this.dragEl.style.height = rect.height+'px';
+        _this.dragEl.style.left = (scrollLeft+rect.left)+'px';
+        _this.dragEl.style.top = (scrollTop+rect.top)+'px';
       }
 
-      _this.startedWith = { event : event, rect : _this.el.getBoundingClientRect() };
+      _this.startedWith = { event : event, rect : _this.dragEl.getBoundingClientRect() };
       if (_this.options.start) {
         _this.options.start.call(this, event, _this.orgEl);
       }
@@ -100,31 +107,31 @@ var Draggable = function(element, options) {
 
       var boundaryRect = _this.tmpArea.getBoundingClientRect();
       if (newLeft > boundaryRect.left && newRight < boundaryRect.right) {
-        _this.el.style.left  = (scrollLeft + newLeft)+'px';
+        _this.dragEl.style.left  = (scrollLeft + newLeft)+'px';
         move.x = distance.x;
       }
       if (newTop > boundaryRect.top && newBottom < boundaryRect.bottom) {
-        _this.el.style.top  = (scrollTop + newTop)+'px';
+        _this.dragEl.style.top  = (scrollTop + newTop)+'px';
         move.y = distance.y;
       }
       if (_this.options.drag) {
-        _this.options.drag.call(this, event, _this.orgEl, move);
+        _this.options.drag.call(this, _this.dragEl, _this.orgEl, move);
       }
     }
   };
   
   this.end = function(event) {
     if (_this.options.end) {
-      _this.options.end.call(this, event, _this.orgEl);
+      _this.options.end.call(this, _this.dragEl, _this.orgEl);
     }
     _this.tmpArea.removeEventListener('mousemove', _this.drag, false);
     _this.tmpArea.removeEventListener('mouseup', _this.end, true);
     if (_this.tmpArea) {
       if (_this.options.clone) {
-        document.body.removeChild( _this.el );
+        _this.dragEl.parentNode.removeChild(_this.dragEl);
       }
       if (_this.options.boundary) {
-        document.body.removeChild( _this.tmpArea );
+        _this.tmpArea.parentNode.removeChild(_this.tmpArea);
       }
       _this.tmpArea = null;
     }
