@@ -22,38 +22,43 @@ var Draggable = function(element, options) {
     element = document.querySelector(element);
   }
   this.orgEl = element;    // original clicked element 
-  this.orgCssText = null;  // original style css text
   this.el = null;          // element to be dragged. original or cloned one
   this.tmpArea = null;     // when drag starts, create a temporary dragging area so that mouse can move around
   this.startedWith = null; // status of when drag starts
   this.options = null;
+  
+  var createOverlay = function(el, options) {
+    var elBCR = el.getBoundingClientRect();
+    var overlay = document.createElement("div");
+    overlay.style.position = "absolute";
+    overlay.style.width = elBCR.width +'px';
+    overlay.style.height= elBCR.height+'px';
+    overlay.style.zIndex = 100;
+    for (var key in (options||{})) {
+      overlay.style[key] = options[key];
+    }
+    el.parentElement.insertBefore(overlay, el);
+    return overlay;
+  }
 
-  this.init = function(element, options) {
-    options = options || {}
-    options.boundary = options.boundary || document.body;
-    this.options = options;
-    element.addEventListener("mousedown", this.start, false);
-  };
   var _this = this;
+  
   this.start = function(event) {
     event.preventDefault(); //prevent from selecting html
     if (!_this.tmpArea) {
       // setup dragging Area
-      var boundaryRect = _this.options.boundary.getBoundingClientRect();
-      var tmpArea = document.createElement('div');
-      var scrollTop  = (document.all ? document.body.scrollTop : window.pageYOffset);
-      var scrollLeft = (document.all ? document.body.scrollLeft : window.pageXOffset);
-      tmpArea.style.cssText = "position:absolute; border: 0px dotted black; "+
-        "width:"+boundaryRect.width+"px; height:"+boundaryRect.height+"px; "+
-        "top:"+(scrollTop+boundaryRect.top)+"px; "+
-        "left:"+(scrollLeft+boundaryRect.left)+"px";
-      document.body.appendChild(tmpArea);
-      tmpArea.addEventListener('mousemove',_this.drag, false);
-      tmpArea.addEventListener('mouseup',_this.end, true);
-      _this.tmpArea = tmpArea;
+      if (_this.options.boundary) {
+        _this.tmpArea = createOverlay(_this.options.boundary);
+      } else {
+        _this.tmpArea = document.body;
+      }
+      _this.tmpArea.addEventListener('mousemove',_this.drag, false);
+      _this.tmpArea.addEventListener('mouseup',_this.end, true);
 
       // setup dragging object
       var rect = _this.orgEl.getBoundingClientRect();
+      var scrollTop  = (document.all ? document.body.scrollTop : window.pageYOffset);
+      var scrollLeft = (document.all ? document.body.scrollLeft : window.pageXOffset);
       if (_this.options.clone) {
         var clonedEl = _this.orgEl.cloneNode(true);
         var css = { opacity: 1, display: "block", position: "absolute", margin: 0,
@@ -73,12 +78,12 @@ var Draggable = function(element, options) {
       }
 
       _this.startedWith = { event : event, rect : _this.el.getBoundingClientRect() };
-      _this.orgCssText = _this.orgEl.style.cssText;
       if (_this.options.start) {
         _this.options.start.call(this, event, _this.orgEl);
       }
-    }
+    } 
   };
+  
   this.drag =  function(event) {
     var scrollTop  = (document.all ? document.body.scrollTop : window.pageYOffset);
     var scrollLeft = (document.all ? document.body.scrollLeft : window.pageXOffset);
@@ -87,7 +92,7 @@ var Draggable = function(element, options) {
         x: (event.clientX - _this.startedWith.event.clientX),
         y: (event.clientY - _this.startedWith.event.clientY)
       };
-      var move = {x: 0, y: 0 };
+      var move = {};
       var newLeft = _this.startedWith.rect.left + distance.x;
       var newRight = _this.startedWith.rect.right + distance.x;
       var newTop  = _this.startedWith.rect.top  + distance.y ;
@@ -107,18 +112,24 @@ var Draggable = function(element, options) {
       }
     }
   };
+  
   this.end = function(event) {
     if (_this.options.end) {
       _this.options.end.call(this, event, _this.orgEl);
     }
+    _this.tmpArea.removeEventListener('mousemove', _this.drag, false);
+    _this.tmpArea.addEventListener('mouseup', _this.end, true);
     if (_this.tmpArea) {
       if (_this.options.clone) {
         document.body.removeChild( _this.el );
       }
-      document.body.removeChild( _this.tmpArea );
+      if (_this.options.boundary) {
+        document.body.removeChild( _this.tmpArea );
+      }
       _this.tmpArea = null;
     }
   };
-  this.init(element,options);
-  return element;
+  
+  this.options = options||{};
+  element.addEventListener("mousedown", this.start, false);
 }
