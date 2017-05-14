@@ -10,7 +10,7 @@ class Konsole {
   }
   
   log() {
-    console.log.apply(Array.prototype.slice.call(arguments));
+    //console.log.apply(Array.prototype.slice.call(arguments));
     document.querySelector("#konsole").value += Array.prototype.slice.call(arguments).join(" ") + "\n";
   }
   
