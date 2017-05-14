@@ -1,6 +1,8 @@
 /**
  * Display console output to textarea at the bottom of the page.
- * Usage: konsole.log(1,2,3,4,5)
+ * Usage: 
+ *  var konsolw = new Konsole(); // will add `<textarea id="konsole">` at the bottom of the page
+ *  konsole.log(1,2,3,4,5);      // `1 2 3 4 5\n` will be added into textarea
  */
 class Konsole {
   constructor() {
