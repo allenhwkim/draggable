@@ -10,8 +10,8 @@ class Konsole {
   }
   
   log() {
-    document.querySelector("#konsole").value += 
-    Array.prototype.slice.call(arguments).join(" ") + "\n";
+    console.log.apply(Array.prototype.slice.call(arguments));
+    document.querySelector("#konsole").value += Array.prototype.slice.call(arguments).join(" ") + "\n";
   }
   
   appendKonsoleTextarea() {
